@@ -1,8 +1,8 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class TicTacToe extends JFrame implements ActionListener {
 
@@ -11,9 +11,10 @@ public class TicTacToe extends JFrame implements ActionListener {
     private JLabel messageLabel;
     private final Color xColor = Color.BLUE;
     private final Color oColor = Color.RED;
+    private JButton resetButton;
 
     public TicTacToe() {
-        setTitle("Colorful Tic Tac Toe");
+        setTitle("Colorful Tic Tac Toe with Reset");
         setSize(400, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -42,40 +43,50 @@ public class TicTacToe extends JFrame implements ActionListener {
 
         add(messageLabel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.CENTER);
-        messageLabel.setForeground(xColor); // Initial color for player X
+        
+        // Set initial color for X player
+        messageLabel.setForeground(xColor);
+        
+        // Add reset button controls
+        resetButton = new JButton("New Game");
+        resetButton.setFont(new Font("Arial", Font.BOLD, 16));
+        resetButton.addActionListener(e -> resetGame());
 
+        JPanel controlPanel = new JPanel();
+        controlPanel.add(resetButton);
+        add(controlPanel, BorderLayout.SOUTH);
     }
 
     @Override
-public void actionPerformed(ActionEvent e) {
-    JButton buttonClicked = (JButton) e.getSource();
-    
-    if (!buttonClicked.getText().equals("")) {
-        return; // If the cell is already taken, do nothing
-    }
+    public void actionPerformed(ActionEvent e) {
+        JButton buttonClicked = (JButton) e.getSource();
+        
+        if (!buttonClicked.getText().equals("")) {
+            return; // If the cell is already taken, do nothing
+        }
 
-    buttonClicked.setText(String.valueOf(currentPlayer));
-    
-    // Set the button color based on player
-    if (currentPlayer == 'X') {
-        buttonClicked.setForeground(xColor);
-    } else {
-        buttonClicked.setForeground(oColor);
-    }
+        buttonClicked.setText(String.valueOf(currentPlayer));
+        
+        // Set the button color based on player
+        if (currentPlayer == 'X') {
+            buttonClicked.setForeground(xColor);
+        } else {
+            buttonClicked.setForeground(oColor);
+        }
 
-    if (checkForWin()) {
-        messageLabel.setText("Player " + currentPlayer + " wins!");
-        messageLabel.setForeground(currentPlayer == 'X' ? xColor : oColor);
-        disableButtons();
-    } else if (isBoardFull()) {
-        messageLabel.setText("It's a draw!");
-        messageLabel.setForeground(Color.BLACK);
-    } else {
-        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-        messageLabel.setText("Player " + currentPlayer + "'s turn");
-        messageLabel.setForeground(currentPlayer == 'X' ? xColor : oColor);
+        if (checkForWin()) {
+            messageLabel.setText("Player " + currentPlayer + " wins!");
+            messageLabel.setForeground(currentPlayer == 'X' ? xColor : oColor);
+            disableButtons();
+        } else if (isBoardFull()) {
+            messageLabel.setText("It's a draw!");
+            messageLabel.setForeground(Color.BLACK);
+        } else {
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+            messageLabel.setText("Player " + currentPlayer + "'s turn");
+            messageLabel.setForeground(currentPlayer == 'X' ? xColor : oColor);
+        }
     }
-}
 
     private boolean checkForWin() {
         for (int i = 0; i < 3; i++) {
@@ -113,6 +124,18 @@ public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j].setEnabled(false);
+            }
+        }
+    }
+
+    private void resetGame() {
+        currentPlayer = 'X';
+        messageLabel.setText("Player X's turn");
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                buttons[i][j].setText("");
+                buttons[i][j].setEnabled(true);
             }
         }
     }
